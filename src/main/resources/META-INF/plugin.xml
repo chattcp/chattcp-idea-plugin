@@ -5,9 +5,9 @@
     <vendor email="feedback@chattcp.com" url="https://chattcp.com">ChatTCP</vendor>
 
     <description><![CDATA[
-    <h2>ChatTCP Plugin for IntelliJ IDEA</h2>
+    <h2>ChatTCP for IntelliJ IDEA</h2>
     <p>ChatTCP is a TCP packet analysis tool dedicated to simplifying TCP packet capture and analysis, making viewing data packets as easy as reading chat messages.</p>
-    <p>The ChatTCP Plugin for IntelliJ IDEA enables rapid packet capture and analysis for debugging web interface issues.</p>
+    <p>ChatTCP for IntelliJ IDEA: Enable fast TCP packet capture and viewing in IntelliJ IDEA, improving the efficiency of microservice interface troubleshooting.</p>
     
     <h3>Plugin Features:</h3>
     <ul>
