@@ -1,0 +1,76 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.intellij' version '1.16.1'
+}
+
+group = 'com.chattcp'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+configurations {
+    // 确保所有依赖都被包含
+    implementation.canBeResolved = true
+}
+
+dependencies {
+    // 使用 pcap4j - 支持 Java 17，更现代化的 pcap 库
+    implementation('org.pcap4j:pcap4j-core:1.8.2') {
+        exclude group: 'org.slf4j'
+    }
+    implementation('org.pcap4j:pcap4j-packetfactory-static:1.8.2') {
+        exclude group: 'org.slf4j'
+    }
+    
+    // JNA - pcap4j 的依赖，必须包含在插件中
+    implementation 'net.java.dev.jna:jna:5.13.0'
+    implementation 'net.java.dev.jna:jna-platform:5.13.0'
+}
+
+// 确保 META-INF/services 文件被包含
+jar {
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+intellij {
+    version = '2023.2'
+    type = 'IC'
+    plugins = []
+}
+
+// 确保依赖库被打包到插件中
+prepareSandbox {
+    doLast {
+        def libDir = file("${destinationDir}/${pluginName.get()}/lib")
+        libDir.mkdirs()
+    }
+}
+
+// Java 编译配置
+tasks.withType(JavaCompile) {
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
+    options.encoding = 'UTF-8'
+}
+
+// 插件配置
+patchPluginXml {
+    sinceBuild.set('232')
+    untilBuild.set('')  // Empty string means no upper limit
+}
+
+signPlugin {
+    certificateChain = System.getenv("CERTIFICATE_CHAIN")
+    privateKey = System.getenv("PRIVATE_KEY")
+    password = System.getenv("PRIVATE_KEY_PASSWORD")
+}
+
+publishPlugin {
+    token = System.getenv("PUBLISH_TOKEN")
+}
