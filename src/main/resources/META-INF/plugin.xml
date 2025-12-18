@@ -19,7 +19,7 @@
     
     <h3>Requirements:</h3>
     <ul>
-      <li>libpcap (macOS/Linux) or Npcap/WinPcap (Windows) must be installed</li>
+      <li>libpcap (macOS/Linux) or Npcap (Windows) must be installed</li>
       <li>System permissions for packet capture are required during use</li>
     </ul>
     ]]></description>
