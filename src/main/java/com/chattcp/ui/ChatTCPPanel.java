@@ -9,6 +9,8 @@ import com.intellij.util.ui.JBUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Desktop;
+import java.io.File;
 import java.util.List;
 
 public class ChatTCPPanel extends JPanel {
@@ -26,7 +28,6 @@ public class ChatTCPPanel extends JPanel {
     private final JPanel packetPanel;
     private final JBScrollPane packetScrollPane;
     
-    private final JButton uploadButton;
     private final JButton openWithChatTCPButton;
     private final JLabel filePathLabel;
     
@@ -74,7 +75,7 @@ public class ChatTCPPanel extends JPanel {
         // Set height but let width auto-size based on text
         Dimension preferredSize = button.getPreferredSize();
         button.setPreferredSize(new Dimension(preferredSize.width, 28));
-        button.setMaximumSize(new Dimension(Integer.MAX_VALUE, 28));
+        button.setMaximumSize(new Dimension(preferredSize.width, 28));
         
         return button;
     }
@@ -136,6 +137,62 @@ public class ChatTCPPanel extends JPanel {
         }
     }
     
+    /**
+     * Show dialog when ChatTCP app is not installed
+     */
+    private void showChatTCPNotInstalledDialog(String pcapFilePath) {
+        String message = "ChatTCP APP is not installed on your system.\nYou can upload the PCAP file to ChatTCP web version for analysis:\nhttps://chattcp.com";
+        
+        Object[] options = {"Close", "Open File Location"};
+        int choice = JOptionPane.showOptionDialog(
+            this,
+            message,
+            "ChatTCP Not Installed",
+            JOptionPane.DEFAULT_OPTION,
+            JOptionPane.INFORMATION_MESSAGE,
+            null,
+            options,
+            options[0]
+        );
+        
+        if (choice == 1) {
+            // Open file location
+            openFileLocation(pcapFilePath);
+        }
+    }
+    
+    /**
+     * Open file location in system file browser
+     */
+    private void openFileLocation(String filePath) {
+        try {
+            File file = new File(filePath);
+            File parentDir = file.getParentFile();
+            
+            if (parentDir != null && parentDir.exists()) {
+                String osName = System.getProperty("os.name").toLowerCase();
+                
+                if (osName.contains("mac")) {
+                    // macOS: open Finder and select the file
+                    Runtime.getRuntime().exec(new String[]{"open", "-R", filePath});
+                } else if (osName.contains("win")) {
+                    // Windows: open Explorer and select the file
+                    Runtime.getRuntime().exec(new String[]{"explorer.exe", "/select,", filePath});
+                } else {
+                    // Linux: just open the parent directory
+                    Desktop.getDesktop().open(parentDir);
+                }
+                
+                System.out.println("Opened file location: " + parentDir.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to open file location: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, 
+                "Failed to open file location:\n" + e.getMessage(), 
+                "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
     public ChatTCPPanel(PacketCaptureService captureService) {
         super(new BorderLayout());
         this.captureService = captureService;
@@ -155,35 +212,13 @@ public class ChatTCPPanel extends JPanel {
         this.packetPanel = new JPanel();
         this.packetScrollPane = new JBScrollPane(packetPanel);
         
-        this.uploadButton = createStyledButton("Upload Analysis");
-        this.openWithChatTCPButton = createStyledButton("Open with ChatTCP");
+        this.openWithChatTCPButton = createStyledButton("Open With ChatTCP");
         this.filePathLabel = new JLabel("Capture file: Not started");
         this.filePathLabel.setForeground(new Color(180, 180, 180));
         this.filePathLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
         
-        // Check if ChatTCP is available on macOS
-        String osName = System.getProperty("os.name").toLowerCase();
-        boolean isMac = osName.contains("mac");
-        System.out.println("Operating System: " + osName);
-        System.out.println("Is macOS: " + isMac);
-        
-        boolean hasChatTCP = false;
-        if (isMac) {
-            hasChatTCP = isChatTCPInstalled();
-            System.out.println("ChatTCP installed: " + hasChatTCP);
-        }
-        
-        // If ChatTCP is available, show "Open with ChatTCP" button, otherwise show "Upload Analysis"
-        boolean showChatTCPButton = isMac && hasChatTCP;
-        openWithChatTCPButton.setVisible(showChatTCPButton);
-        uploadButton.setVisible(!showChatTCPButton);
-        
-        // Initially disable buttons until capture starts
+        // Always show "Open with ChatTCP" button
         openWithChatTCPButton.setEnabled(false);
-        uploadButton.setEnabled(false);
-        
-        System.out.println("Open with ChatTCP button visible: " + openWithChatTCPButton.isVisible());
-        System.out.println("Upload Analysis button visible: " + uploadButton.isVisible());
         
         // 设置最小宽度
         setMinimumSize(new Dimension(400, 300));
@@ -243,24 +278,26 @@ public class ChatTCPPanel extends JPanel {
         packetScrollPane.setBorder(BorderFactory.createTitledBorder("Packets"));
         packetScrollPane.getViewport().setBackground(PANEL_BACKGROUND);
         
-        // 底部面板 - 使用 BorderLayout
-        JPanel bottomPanel = new JPanel(new BorderLayout());
+        // 底部面板 - 使用 BoxLayout 垂直布局
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
         bottomPanel.setBorder(JBUI.Borders.empty(10));
         bottomPanel.setBackground(PANEL_BACKGROUND);
         
         // 文件路径显示
-        JPanel fileInfoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel fileInfoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         fileInfoPanel.setBackground(PANEL_BACKGROUND);
+        fileInfoPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         fileInfoPanel.add(filePathLabel);
         
         // 按钮面板
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 5));
         buttonPanel.setBackground(PANEL_BACKGROUND);
+        buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         buttonPanel.add(openWithChatTCPButton);
-        buttonPanel.add(uploadButton);
         
-        bottomPanel.add(fileInfoPanel, BorderLayout.WEST);
-        bottomPanel.add(buttonPanel, BorderLayout.EAST);
+        bottomPanel.add(fileInfoPanel);
+        bottomPanel.add(buttonPanel);
         
         // 中间分割面板
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -349,9 +386,8 @@ public class ChatTCPPanel extends JPanel {
                     interfaceComboBox.setEnabled(false);
                     portField.setEnabled(false);
                     
-                    // Enable file operation buttons
+                    // Enable file operation button
                     openWithChatTCPButton.setEnabled(true);
-                    uploadButton.setEnabled(true);
                     
                     // Update file path label
                     String pcapFile = captureService.getCurrentPcapFile();
@@ -417,33 +453,23 @@ public class ChatTCPPanel extends JPanel {
             }
             
             String pcapFile = captureService.getCurrentPcapFile();
-            if (pcapFile != null && new java.io.File(pcapFile).exists()) {
-                openWithChatTCP(pcapFile);
-            } else {
+            if (pcapFile == null || !new java.io.File(pcapFile).exists()) {
                 JOptionPane.showMessageDialog(this, 
                     "No capture file available.", 
                     "Info", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-        
-        uploadButton.addActionListener(e -> {
-            // Check if capture is still running
-            if (stopButton.isEnabled()) {
-                JOptionPane.showMessageDialog(this, 
-                    "Please stop capturing first before uploading the file.", 
-                    "Capture In Progress", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             
-            String pcapFile = captureService.getCurrentPcapFile();
-            if (pcapFile != null) {
-                String message = "Captured packets saved to:\n" + pcapFile + 
-                               "\n\nYou can upload this file to a server for further analysis.\n" +
-                               "Upload feature coming soon...";
-                JOptionPane.showMessageDialog(this, message, "Pcap File Info", JOptionPane.INFORMATION_MESSAGE);
+            // Check if running on macOS
+            String osName = System.getProperty("os.name").toLowerCase();
+            boolean isMac = osName.contains("mac");
+            
+            if (!isMac || !isChatTCPInstalled()) {
+                // Show dialog with message and buttons
+                showChatTCPNotInstalledDialog(pcapFile);
             } else {
-                JOptionPane.showMessageDialog(this, "No capture file available.", 
-                                            "Info", JOptionPane.INFORMATION_MESSAGE);
+                // Open with ChatTCP app
+                openWithChatTCP(pcapFile);
             }
         });
     }

@@ -1,6 +1,7 @@
 # ChatTCP Plugin for IntelliJ IDEA
 
 ChatTCP 的 IntelliJ IDEA 插件。
+https://plugins.jetbrains.com/vendor/chattcp
 
 ## 功能特性
 
