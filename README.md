@@ -66,3 +66,45 @@ sudo yum install libpcap-devel
 4. 点击"开始"按钮开始捕获
 5. 在连接列表中选择要查看的连接
 6. 在下方查看该连接的所有数据包
+
+## 许可证
+
+本项目采用**双许可证**模式：
+
+### 开源许可证 (AGPL-3.0)
+对于开源项目和个人学习使用，本软件遵循 GNU Affero General Public License v3.0。
+这意味着：
+- ✅ 可以自由使用、修改和分发
+- ✅ 必须开源你的修改和衍生作品
+- ✅ 必须使用相同的 AGPL-3.0 许可证
+- ✅ 如果通过网络提供服务，也必须开源
+
+### 商业许可证
+如果你想在闭源/商业项目中使用本软件，而不想遵守 AGPL-3.0 的开源要求，
+可以购买商业许可证。商业许可证允许：
+- ✅ 在闭源项目中使用
+- ✅ 不需要开源你的代码
+- ✅ 获得优先技术支持
+- ✅ 定制化授权条款
+
+**商业授权咨询**: support@chattcp.com
+
+### 第三方依赖
+本项目使用了以下开源库：
+- [pcap4j](https://github.com/kaitoy/pcap4j) - MIT License
+- [libpcap](https://www.tcpdump.org/) - BSD 3-Clause License
+- [JNA](https://github.com/java-native-access/jna) - Apache 2.0 / LGPL 2.1
+
+详见 [THIRD-PARTY-LICENSES.txt](THIRD-PARTY-LICENSES.txt)
+
+## 贡献
+
+欢迎贡献代码！请注意：
+- 提交的代码将遵循 AGPL-3.0 许可证
+- 重大修改请先开 Issue 讨论
+- 遵循现有的代码风格
+
+## 联系方式
+
+- 邮箱: support@chattcp.com
+- 插件主页: https://plugins.jetbrains.com/vendor/chattcp

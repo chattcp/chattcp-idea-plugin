@@ -1,40 +1,69 @@
-ChatTCP Plugin for IntelliJ IDEA - Proprietary License
+ChatTCP Plugin for IntelliJ IDEA - Dual License
 
 Copyright (c) 2025 ChatTCP. All rights reserved.
 
-This software and associated documentation files (the "Software") are proprietary 
-and confidential to ChatTCP.
+================================================================================
+DUAL LICENSING
+================================================================================
 
-TERMS AND CONDITIONS:
+This software is available under two licenses:
 
-1. LICENSE GRANT
-   Subject to the terms of this agreement, ChatTCP grants you a limited, 
-   non-exclusive, non-transferable license to use the Software.
+1. GNU Affero General Public License v3.0 (AGPL-3.0) - for open source use
+2. Commercial License - for proprietary/commercial use
 
-2. RESTRICTIONS
-   You may NOT:
-   - Modify, adapt, translate, or create derivative works of the Software
-   - Reverse engineer, decompile, or disassemble the Software
-   - Remove or alter any proprietary notices or labels on the Software
-   - Distribute, sublicense, rent, lease, or lend the Software
-   - Use the Software for any unlawful purpose
+You may choose which license is appropriate for your use case.
 
-3. OWNERSHIP
-   ChatTCP retains all right, title, and interest in and to the Software, 
-   including all intellectual property rights.
+================================================================================
+OPTION 1: GNU AGPL v3.0 (Open Source License)
+================================================================================
 
-4. TERMINATION
-   This license is effective until terminated. Your rights under this license 
-   will terminate automatically without notice if you fail to comply with any term.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-5. DISCLAIMER OF WARRANTY
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
 
-6. LIMITATION OF LIABILITY
-   IN NO EVENT SHALL CHATTCP BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR 
-   IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-For licensing inquiries, please contact: support@chattcp.com
+Key requirements under AGPL-3.0:
+- You must disclose your source code when you distribute or provide network 
+  access to your modified version
+- You must license your modifications under AGPL-3.0
+- You must include copyright and license notices
+- You must state significant changes made to the software
+
+================================================================================
+OPTION 2: Commercial License
+================================================================================
+
+If you want to use this software in a proprietary/commercial application 
+without the open source requirements of AGPL-3.0, you must obtain a 
+commercial license from ChatTCP.
+
+Commercial license benefits:
+- Use in closed-source/proprietary applications
+- No requirement to disclose your source code
+- No copyleft obligations
+- Priority support and updates
+- Custom licensing terms available
+
+For commercial licensing inquiries, please contact: support@chattcp.com
+
+================================================================================
+THIRD-PARTY LICENSES
+================================================================================
+
+This software uses the following third-party libraries:
+
+1. pcap4j (https://github.com/kaitoy/pcap4j)
+   License: MIT License
+   
+2. libpcap (https://www.tcpdump.org/)
+   License: BSD 3-Clause License
+
+See THIRD-PARTY-LICENSES.txt for full license texts.
