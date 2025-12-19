@@ -545,85 +545,134 @@ public class PacketCaptureService {
     /**
      * Try to parse WebSocket frame
      */
-    private String parseWebSocket(byte[] payload) {
-        if (payload == null || payload.length < 2) {
+    private String parseWebSocket(byte[] data) {
+        if (data == null || data.length < 2) {
             return null;
         }
         
         try {
-            // Check if this looks like HTTP first (common false positive)
-            if (payload.length > 4) {
-                String start = new String(payload, 0, Math.min(4, payload.length), "UTF-8");
+            // Check if this looks like HTTP first
+            if (data.length > 4) {
+                String start = new String(data, 0, Math.min(4, data.length), "UTF-8");
                 if (start.startsWith("GET ") || start.startsWith("POST") || 
                     start.startsWith("HTTP") || start.startsWith("PUT ") ||
                     start.startsWith("HEAD") || start.startsWith("DELE")) {
-                    return null; // This is HTTP, not WebSocket
+                    return null;
                 }
             }
             
-            int firstByte = payload[0] & 0xFF;
-            int secondByte = payload[1] & 0xFF;
+            // First byte
+            boolean fin = (data[0] & 0x80) != 0;
+            boolean rsv1 = (data[0] & 0x40) != 0;
+            boolean rsv2 = (data[0] & 0x20) != 0;
+            boolean rsv3 = (data[0] & 0x10) != 0;
+            int opcode = data[0] & 0x0F;
             
-            boolean fin = (firstByte & 0x80) != 0;
-            int opcode = firstByte & 0x0F;
-            boolean masked = (secondByte & 0x80) != 0;
-            int payloadLen = secondByte & 0x7F;
-            
-            // WebSocket frames must have valid opcode (0-10)
-            // and reasonable payload length
-            if (opcode < 0 || opcode > 10 || payloadLen > 125) {
+            // Validate opcode (0x0, 0x1, 0x2, 0x8, 0x9, 0xA)
+            if (opcode != 0x0 && opcode != 0x1 && opcode != 0x2 && 
+                opcode != 0x8 && opcode != 0x9 && opcode != 0xA) {
                 return null;
             }
             
-            // Additional validation: check reserved bits
-            int rsv = (firstByte >> 4) & 0x07;
-            if (rsv != 0) {
-                return null; // Reserved bits should be 0
+            // Second byte
+            boolean masked = (data[1] & 0x80) != 0;
+            int payloadLen = data[1] & 0x7F;
+            
+            int payloadOffset;
+            int extendedPayloadLen;
+            
+            if (payloadLen == 126) {
+                if (data.length < 4) return null;
+                // Big-endian uint16
+                extendedPayloadLen = ((data[2] & 0xFF) << 8) | (data[3] & 0xFF);
+                payloadOffset = 4;
+            } else if (payloadLen == 127) {
+                if (data.length < 10) return null;
+                // Big-endian uint64 (we only use lower 32 bits)
+                extendedPayloadLen = ((data[6] & 0xFF) << 24) | 
+                                    ((data[7] & 0xFF) << 16) |
+                                    ((data[8] & 0xFF) << 8) | 
+                                    (data[9] & 0xFF);
+                payloadOffset = 10;
+            } else {
+                extendedPayloadLen = payloadLen;
+                payloadOffset = 2;
             }
             
-            if (opcode >= 0 && opcode <= 10) {
-                StringBuilder result = new StringBuilder();
-                result.append("WebSocket Frame:\n");
-                result.append("  FIN: ").append(fin).append("\n");
-                result.append("  Opcode: ").append(getOpcodeDescription(opcode)).append("\n");
-                result.append("  Masked: ").append(masked).append("\n");
-                result.append("  Payload Length: ").append(payloadLen).append("\n");
-                
-                if (opcode == 1 && payloadLen > 0 && payloadLen < 126) {
-                    int offset = 2;
-                    byte[] maskingKey = null;
-                    
-                    if (masked) {
-                        if (payload.length < offset + 4) {
-                            return result.toString();
-                        }
-                        maskingKey = new byte[4];
-                        System.arraycopy(payload, offset, maskingKey, 0, 4);
-                        offset += 4;
-                    }
-                    
-                    if (payload.length >= offset + payloadLen) {
-                        byte[] data = new byte[payloadLen];
-                        for (int i = 0; i < payloadLen; i++) {
-                            if (masked && maskingKey != null) {
-                                data[i] = (byte) (payload[offset + i] ^ maskingKey[i % 4]);
-                            } else {
-                                data[i] = payload[offset + i];
-                            }
-                        }
-                        result.append("  Text: ").append(new String(data, "UTF-8"));
-                    }
-                }
-                
-                return result.toString();
+            // Sanity check
+            if (extendedPayloadLen < 0 || extendedPayloadLen > 10000) {
+                return null;
             }
+            
+            // Handle masking key
+            byte[] maskKey = new byte[4];
+            if (masked) {
+                if (data.length < payloadOffset + 4) return null;
+                System.arraycopy(data, payloadOffset, maskKey, 0, 4);
+                payloadOffset += 4;
+            }
+            
+            // Check if we have enough data
+            if (data.length < payloadOffset + extendedPayloadLen) {
+                return null;
+            }
+            
+            // Extract payload
+            byte[] payload = new byte[extendedPayloadLen];
+            System.arraycopy(data, payloadOffset, payload, 0, extendedPayloadLen);
+            
+            // Unmask payload if necessary
+            if (masked) {
+                for (int i = 0; i < payload.length; i++) {
+                    payload[i] ^= maskKey[i % 4];
+                }
+            }
+            
+            // Build result
+            StringBuilder result = new StringBuilder();
+            result.append("WebSocket Frame:\n");
+            result.append("  FIN: ").append(fin).append("\n");
+            result.append("  Opcode: ").append(getOpcodeDescription(opcode)).append("\n");
+            result.append("  Masked: ").append(masked).append("\n");
+            result.append("  Payload Length: ").append(extendedPayloadLen).append("\n");
+            
+            // Check if compressed (RSV1 bit)
+            if (rsv1) {
+                result.append("  Compressed: Yes (RSV1=1)\n");
+            }
+            
+            // Display payload based on opcode
+            if (opcode == 0x1) {
+                // Text frame
+                if (rsv1) {
+                    // Compressed - show as base64 (proper decompression needs connection context)
+                    String base64Data = java.util.Base64.getEncoder().encodeToString(payload);
+                    result.append("  Text (compressed, base64): ").append(base64Data);
+                    result.append("\n  Note: WebSocket compression requires connection context for proper decompression");
+                } else {
+                    // Not compressed
+                    String textData = new String(payload, "UTF-8");
+                    result.append("  Text: ").append(textData);
+                }
+            } else if (opcode == 0x2) {
+                // Binary frame
+                String base64Data = java.util.Base64.getEncoder().encodeToString(payload);
+                result.append("  Binary (base64): ").append(base64Data);
+            }
+            
+            return result.toString();
+            
         } catch (Exception e) {
-            // Not a WebSocket packet
+            return null;
         }
-        
-        return null;
     }
+    
 
+
+
+    
+
+    
     /**
      * Get WebSocket opcode description
      */
@@ -632,9 +681,19 @@ public class PacketCaptureService {
             case 0: return "0 (Continuation)";
             case 1: return "1 (Text)";
             case 2: return "2 (Binary)";
+            case 3: return "3 (Reserved)";
+            case 4: return "4 (Reserved)";
+            case 5: return "5 (Reserved)";
+            case 6: return "6 (Reserved)";
+            case 7: return "7 (Reserved)";
             case 8: return "8 (Close)";
             case 9: return "9 (Ping)";
             case 10: return "10 (Pong)";
+            case 11: return "11 (Reserved)";
+            case 12: return "12 (Reserved)";
+            case 13: return "13 (Reserved)";
+            case 14: return "14 (Reserved)";
+            case 15: return "15 (Reserved)";
             default: return String.valueOf(opcode);
         }
     }

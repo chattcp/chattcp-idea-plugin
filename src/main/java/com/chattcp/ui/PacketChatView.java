@@ -92,11 +92,17 @@ public class PacketChatView extends JPanel {
         JPanel headerPanel = createHeaderPanel(isClient);
         bubblePanel.add(headerPanel);
         
-        // Payload content
-        if (packet.getPayload() != null && !packet.getPayload().isEmpty()) {
-            String payload = packet.getPayload();
-            if (payload.length() > 1000) {
-                payload = payload.substring(0, 1000) + "\n... (truncated, total: " + payload.length() + " chars)";
+        // WebSocket data content (prioritize WebSocket over raw payload)
+        String displayContent = null;
+        if (packet.getWebsocketData() != null && !packet.getWebsocketData().isEmpty()) {
+            displayContent = packet.getWebsocketData();
+        } else if (packet.getPayload() != null && !packet.getPayload().isEmpty()) {
+            displayContent = packet.getPayload();
+        }
+        
+        if (displayContent != null) {
+            if (displayContent.length() > 1000) {
+                displayContent = displayContent.substring(0, 1000) + "\n... (truncated, total: " + displayContent.length() + " chars)";
             }
             
             // Add separator
@@ -107,7 +113,7 @@ public class PacketChatView extends JPanel {
             bubblePanel.add(separator);
             bubblePanel.add(Box.createVerticalStrut(8));
             
-            payloadArea = new JTextArea(payload);
+            payloadArea = new JTextArea(displayContent);
             payloadArea.setEditable(false);
             payloadArea.setLineWrap(true);
             payloadArea.setWrapStyleWord(false);
