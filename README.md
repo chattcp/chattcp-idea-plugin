@@ -1,8 +1,6 @@
 # ChatTCP for IntelliJ IDEA
 
-Enable fast TCP packet capture and viewing in IntelliJ IDEA, improving the efficiency of microservice interface troubleshooting.
-
-https://plugins.jetbrains.com/vendor/chattcp
+[ChatTCP](https://chattcp.com) for IntelliJ IDEA: Enable fast TCP packet capture and viewing in IntelliJ IDEA, improving the efficiency of microservice interface troubleshooting.
 
 ## Features
 
