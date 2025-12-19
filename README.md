@@ -1,29 +1,30 @@
-# ChatTCP Plugin for IntelliJ IDEA
+# ChatTCP for IntelliJ IDEA
 
-ChatTCP 的 IntelliJ IDEA 插件。
+Enable fast TCP packet capture and viewing in IntelliJ IDEA, improving the efficiency of microservice interface troubleshooting.
+
 https://plugins.jetbrains.com/vendor/chattcp
 
-## 功能特性
+## Features
 
-- 🔍 **实时捕获** - 实时捕获 TCP 连接和数据包
-- 🌐 **网络接口选择** - 支持选择不同的网络接口
-- 🎯 **端口过滤** - 可指定监听的 TCP 端口
-- 💬 **聊天式展示** - 以聊天对话形式展示数据包，直观易读
-- 📊 **详细信息** - 显示 SEQ、标志位、时间戳、Payload 等详细信息
-- 🔌 **WebSocket 支持** - 自动解码 WebSocket 协议数据包
+- 🔍 **Real-time Capture** - Capture TCP connections and packets in real-time
+- 🌐 **Network Interface Selection** - Support for selecting different network interfaces
+- 🎯 **Port Filtering** - Specify TCP ports to monitor
+- 💬 **Chat-style Display** - Display packets in a chat conversation format for intuitive reading
+- 📊 **Detailed Information** - Show SEQ, flags, timestamps, payload, and other detailed information
+- 🔌 **WebSocket Support** - Automatically decode WebSocket protocol packets
 
-## 技术栈
+## Tech Stack
 
 - Java 17
 - IntelliJ Platform SDK
-- pcap4j 1.8.2 (网络数据包捕获)
+- pcap4j 1.8.2 (Network packet capture)
 - jna 5.13.0
 
-## 前置要求
+## Prerequisites
 
 ### macOS
 ```bash
-# libpcap 通常已预装，如果没有：
+# libpcap is usually pre-installed, if not:
 brew install libpcap
 ```
 
@@ -38,73 +39,43 @@ sudo yum install libpcap-devel
 ```
 
 ### Windows
-下载并安装 Npcap: https://npcap.com/
+Download and install Npcap: https://npcap.com/
 
-## 构建项目
+## Build
 
 ```bash
 ./gradlew buildPlugin
 ```
 
-## 运行插件
+## Run Plugin
 
 ```bash
 ./gradlew runIde
 ```
 
-## 安装
+## Installation
 
-1. 构建插件: `./gradlew buildPlugin`
-2. 在 IntelliJ IDEA 中: `Settings` → `Plugins` → `⚙️` → `Install Plugin from Disk`
-3. 选择 `build/distributions/ChatTCP-Plugin-1.0.0.zip`
+1. Build the plugin: `./gradlew buildPlugin`
+2. In IntelliJ IDEA: `Settings` → `Plugins` → `⚙️` → `Install Plugin from Disk`
+3. Select `build/distributions/ChatTCP-Plugin-*.*.*.zip`
 
-## 使用说明
+## Usage
 
-1. 点击右侧工具栏的 ChatTCP 图标
-2. 选择网络接口（如 en0, eth0 等）
-3. 输入要监听的 TCP 端口（如 8080, 3000）
-4. 点击"开始"按钮开始捕获
-5. 在连接列表中选择要查看的连接
-6. 在下方查看该连接的所有数据包
+1. Click the ChatTCP icon in the right toolbar
+2. Select a network interface (e.g., en0, eth0)
+3. Enter the TCP port to monitor (e.g., 8080, 3000)
+4. Click the "Start" button to begin capturing
+5. Select a connection from the connection list
+6. View all packets for that connection below
 
-## 许可证
+## Contributing
 
-本项目采用**双许可证**模式：
+Contributions are welcome! Please note:
+- Submitted code will be licensed under AGPL-3.0
+- Please open an issue first for major changes
+- Follow the existing code style
 
-### 开源许可证 (AGPL-3.0)
-对于开源项目和个人学习使用，本软件遵循 GNU Affero General Public License v3.0。
-这意味着：
-- ✅ 可以自由使用、修改和分发
-- ✅ 必须开源你的修改和衍生作品
-- ✅ 必须使用相同的 AGPL-3.0 许可证
-- ✅ 如果通过网络提供服务，也必须开源
+## Contact
 
-### 商业许可证
-如果你想在闭源/商业项目中使用本软件，而不想遵守 AGPL-3.0 的开源要求，
-可以购买商业许可证。商业许可证允许：
-- ✅ 在闭源项目中使用
-- ✅ 不需要开源你的代码
-- ✅ 获得优先技术支持
-- ✅ 定制化授权条款
-
-**商业授权咨询**: support@chattcp.com
-
-### 第三方依赖
-本项目使用了以下开源库：
-- [pcap4j](https://github.com/kaitoy/pcap4j) - MIT License
-- [libpcap](https://www.tcpdump.org/) - BSD 3-Clause License
-- [JNA](https://github.com/java-native-access/jna) - Apache 2.0 / LGPL 2.1
-
-详见 [THIRD-PARTY-LICENSES.txt](THIRD-PARTY-LICENSES.txt)
-
-## 贡献
-
-欢迎贡献代码！请注意：
-- 提交的代码将遵循 AGPL-3.0 许可证
-- 重大修改请先开 Issue 讨论
-- 遵循现有的代码风格
-
-## 联系方式
-
-- 邮箱: support@chattcp.com
-- 插件主页: https://plugins.jetbrains.com/vendor/chattcp
+- Email: wujiuye99@gmail.com
+- Plugin Homepage: https://plugins.jetbrains.com/vendor/chattcp
