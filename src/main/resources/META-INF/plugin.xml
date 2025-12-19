@@ -1,0 +1,36 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <id>com.chattcp.plugin</id>
+    <name>ChatTCP</name>
+    <vendor email="feedback@chattcp.com" url="https://chattcp.com">ChatTCP</vendor>
+
+    <description><![CDATA[
+    <h2>ChatTCP for IntelliJ IDEA</h2>
+    <p>ChatTCP is a TCP packet analysis tool dedicated to simplifying TCP packet capture and analysis, making viewing data packets as easy as reading chat messages.</p>
+    <p>ChatTCP for IntelliJ IDEA: Enable fast TCP packet capture and viewing in IntelliJ IDEA, improving the efficiency of microservice interface troubleshooting.</p>
+    
+    <h3>Plugin Features:</h3>
+    <ul>
+      <li>Real-time TCP packet capture and viewing</li>
+      <li>Chat-style packet display (client/server conversation)</li>
+      <li>Decoding support exclusively for HTTP/WebSocket protocols</li>
+      <li>Export captured packets to PCAP files for further analysis</li>
+    </ul>
+    
+    <h3>Requirements:</h3>
+    <ul>
+      <li>libpcap (macOS/Linux) or Npcap (Windows) must be installed</li>
+      <li>System permissions for packet capture are required during use</li>
+    </ul>
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="ChatTCP" 
+                    secondary="true" 
+                    icon="/icons/chattcp.svg" 
+                    anchor="right" 
+                    factoryClass="com.chattcp.toolwindow.ChatTCPToolWindowFactory"/>
+    </extensions>
+</idea-plugin>
