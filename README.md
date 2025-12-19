@@ -43,7 +43,7 @@ sudo yum install libpcap-devel
 ## 构建项目
 
 ```bash
-./gradlew build
+./gradlew buildPlugin
 ```
 
 ## 运行插件
