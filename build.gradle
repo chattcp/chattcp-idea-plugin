@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.chattcp'
-version = '1.0.1'
+version = '1.0.0'
 
 repositories {
     mavenCentral()
@@ -26,8 +26,8 @@ dependencies {
     }
     
     // JNA - pcap4j 的依赖，必须包含在插件中
-    implementation 'net.java.dev.jna:jna:5.13.0'
-    implementation 'net.java.dev.jna:jna-platform:5.13.0'
+    implementation 'net.java.dev.jna:jna:5.18.1'
+    implementation 'net.java.dev.jna:jna-platform:5.18.1'
 }
 
 // 确保 META-INF/services 文件被包含
@@ -62,7 +62,16 @@ tasks.withType(JavaCompile) {
 // 插件配置
 patchPluginXml {
     sinceBuild.set('232')
-    untilBuild.set('')  // Empty string means no upper limit
+    untilBuild.set(provider { null })
+}
+
+// 插件验证配置
+runPluginVerifier {
+    ideVersions.set(['2023.2', '2024.3'])
+    failureLevel.set([
+        org.jetbrains.intellij.tasks.RunPluginVerifierTask.FailureLevel.COMPATIBILITY_PROBLEMS,
+        org.jetbrains.intellij.tasks.RunPluginVerifierTask.FailureLevel.INVALID_PLUGIN
+    ])
 }
 
 signPlugin {

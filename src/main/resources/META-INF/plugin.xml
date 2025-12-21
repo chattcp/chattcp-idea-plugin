@@ -1,5 +1,5 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
-<idea-plugin>
+<idea-plugin require-restart="true">
     <id>com.chattcp.plugin</id>
     <name>ChatTCP</name>
     <vendor email="feedback@chattcp.com" url="https://chattcp.com">ChatTCP</vendor>
@@ -23,6 +23,9 @@
       <li>System permissions for packet capture are required during use</li>
     </ul>
     ]]></description>
+
+    <!-- Specify IDE build number compatibility -->
+    <idea-version since-build="232"/>
 
     <depends>com.intellij.modules.platform</depends>
 

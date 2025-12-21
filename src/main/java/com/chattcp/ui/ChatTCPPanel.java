@@ -106,7 +106,8 @@ public class ChatTCPPanel extends JPanel {
             }
             
             // Method 2: Use mdfind to search for ChatTCP app
-            Process process = Runtime.getRuntime().exec(new String[]{"mdfind", "kMDItemKind == 'Application' && kMDItemDisplayName == 'ChatTCP'"});
+            ProcessBuilder pb = new ProcessBuilder("mdfind", "kMDItemKind == 'Application' && kMDItemDisplayName == 'ChatTCP'");
+            Process process = pb.start();
             java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()));
             String line = reader.readLine();
             if (line != null && !line.isEmpty()) {
@@ -115,7 +116,8 @@ public class ChatTCPPanel extends JPanel {
             }
             
             // Method 3: Try to check if 'open -a ChatTCP' would work
-            Process testProcess = Runtime.getRuntime().exec(new String[]{"sh", "-c", "which -s open && echo found"});
+            ProcessBuilder testPb = new ProcessBuilder("sh", "-c", "which -s open && echo found");
+            Process testProcess = testPb.start();
             java.io.BufferedReader testReader = new java.io.BufferedReader(new java.io.InputStreamReader(testProcess.getInputStream()));
             String testResult = testReader.readLine();
             
@@ -132,7 +134,8 @@ public class ChatTCPPanel extends JPanel {
      */
     private void openWithChatTCP(String filePath) {
         try {
-            Runtime.getRuntime().exec(new String[]{"open", "-a", "ChatTCP", filePath});
+            ProcessBuilder pb = new ProcessBuilder("open", "-a", "ChatTCP", filePath);
+            pb.start();
             System.out.println("Opened file with ChatTCP: " + filePath);
         } catch (Exception e) {
             System.err.println("Failed to open with ChatTCP: " + e.getMessage());
@@ -179,10 +182,12 @@ public class ChatTCPPanel extends JPanel {
                 
                 if (osName.contains("mac")) {
                     // macOS: open Finder and select the file
-                    Runtime.getRuntime().exec(new String[]{"open", "-R", filePath});
+                    ProcessBuilder pb = new ProcessBuilder("open", "-R", filePath);
+                    pb.start();
                 } else if (osName.contains("win")) {
                     // Windows: open Explorer and select the file
-                    Runtime.getRuntime().exec(new String[]{"explorer.exe", "/select,", filePath});
+                    ProcessBuilder pb = new ProcessBuilder("explorer.exe", "/select,", filePath);
+                    pb.start();
                 } else {
                     // Linux: just open the parent directory
                     Desktop.getDesktop().open(parentDir);
