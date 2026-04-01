@@ -75,5 +75,5 @@ Contributions are welcome! Please note:
 
 ## Contact
 
-- Email: wujiuye99@gmail.com
+- Email: support@chattcp.com
 - Plugin Homepage: https://plugins.jetbrains.com/vendor/chattcp
