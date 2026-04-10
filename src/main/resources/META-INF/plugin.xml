@@ -6,7 +6,7 @@
 
     <description><![CDATA[
     <h2>ChatTCP for IntelliJ IDEA</h2>
-    <p>ChatTCP is a TCP packet analysis tool dedicated to simplifying TCP packet capture and analysis, making viewing data packets as easy as reading chat messages.</p>
+    <p>ChatTCP - An intuitive and easy-to-use PCAP viewer and analyzer dedicated to breaking the 'cognitive load'. Make viewing network packets as easy as reading chat records.</p>
     <p>ChatTCP for IntelliJ IDEA: Enable fast TCP packet capture and viewing in IntelliJ IDEA, improving the efficiency of microservice interface troubleshooting.</p>
     
     <h3>Plugin Features:</h3>
