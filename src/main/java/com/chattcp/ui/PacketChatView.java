@@ -106,10 +106,6 @@ public class PacketChatView extends JPanel {
         }
         
         if (displayContent != null) {
-            if (displayContent.length() > 1000) {
-                displayContent = displayContent.substring(0, 1000) + "\n... (truncated, total: " + displayContent.length() + " chars)";
-            }
-            
             // Add separator
             JSeparator separator = new JSeparator();
             separator.setForeground(new Color(255, 255, 255, 30));

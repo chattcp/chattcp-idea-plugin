@@ -6,7 +6,7 @@
 
     <description><![CDATA[
     <h2>ChatTCP for IntelliJ IDEA</h2>
-    <p>ChatTCP makes viewing network packets as easy as reading chats! Supporting TCP & UDP.</p>
+    <p><a href="https://chattcp.com">ChatTCP</a> makes viewing network packets as easy as reading chats! Supporting TCP & UDP.</p>
     <p>ChatTCP for IntelliJ IDEA: Enable fast TCP packet capture and viewing in IntelliJ IDEA, improving the efficiency of microservice interface troubleshooting.</p>
     
     <h3>Plugin Features:</h3>

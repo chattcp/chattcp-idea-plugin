@@ -25,7 +25,6 @@ public class ChatTCPPanel extends JPanel {
     private final JComboBox<String> interfaceComboBox;
     private final JTextField portField;
     private final JButton startButton;
-    private final JButton stopButton;
     
     private final DefaultListModel<ConnectionInfo> connectionListModel;
     private final JList<ConnectionInfo> connectionList;
@@ -214,7 +213,6 @@ public class ChatTCPPanel extends JPanel {
         this.interfaceComboBox = new JComboBox<>();
         this.portField = new JTextField("8080", 10);
         this.startButton = createStyledButton("Start");
-        this.stopButton = createStyledButton("Stop");
         
         this.connectionListModel = new DefaultListModel<>();
         this.connectionList = new JList<>(connectionListModel);
@@ -261,12 +259,7 @@ public class ChatTCPPanel extends JPanel {
         
         topPanel.add(Box.createHorizontalStrut(10));
         topPanel.add(startButton);
-        topPanel.add(Box.createHorizontalStrut(5));
-        topPanel.add(stopButton);
-        
         topPanel.add(Box.createHorizontalGlue()); // 填充剩余空间
-        
-        stopButton.setEnabled(false);
         
         // 中间连接列表 - 深色主题
         connectionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -343,6 +336,13 @@ public class ChatTCPPanel extends JPanel {
 
     private void setupListeners() {
         startButton.addActionListener(e -> {
+            if (captureService.isCapturing()) {
+                captureService.stopCapture();
+                startButton.setText("Start");
+                interfaceComboBox.setEnabled(true);
+                portField.setEnabled(true);
+                return;
+            }
             System.out.println("Start button clicked");
             
             // Check permissions first
@@ -391,8 +391,7 @@ public class ChatTCPPanel extends JPanel {
                     });
                     
                     System.out.println("Capture started successfully");
-                    startButton.setEnabled(false);
-                    stopButton.setEnabled(true);
+                    startButton.setText("Stop");
                     interfaceComboBox.setEnabled(false);
                     portField.setEnabled(false);
                     
@@ -411,8 +410,7 @@ public class ChatTCPPanel extends JPanel {
             } catch (Exception ex) {
                 System.err.println("Failed to start capture: " + ex.getMessage());
                 ex.printStackTrace();
-                
-                // Show detailed error message
+                startButton.setText("Start");
                 String errorMsg = "Failed to start packet capture.\n\n";
                 errorMsg += "Error: " + ex.getMessage() + "\n\n";
                 
@@ -435,15 +433,6 @@ public class ChatTCPPanel extends JPanel {
             }
         });
         
-        stopButton.addActionListener(e -> {
-            captureService.stopCapture();
-            startButton.setEnabled(true);
-            stopButton.setEnabled(false);
-            interfaceComboBox.setEnabled(true);
-            portField.setEnabled(true);
-            // Don't clear data when stopping - keep it for review
-        });
-        
         connectionList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 ConnectionInfo selected = connectionList.getSelectedValue();
@@ -454,8 +443,7 @@ public class ChatTCPPanel extends JPanel {
         });
         
         openWithChatTCPButton.addActionListener(e -> {
-            // Check if capture is still running
-            if (stopButton.isEnabled()) {
+            if (captureService.isCapturing()) {
                 JOptionPane.showMessageDialog(this, 
                     "Please stop capturing first before opening the file.", 
                     "Capture In Progress", JOptionPane.WARNING_MESSAGE);
